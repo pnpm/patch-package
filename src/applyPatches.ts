@@ -242,8 +242,8 @@ export function applyPatch({
 }: {
   patchFilePath: string
   reverse: boolean
-  packageDetails: PackageDetails
-  patchDir: string
+  packageDetails?: PackageDetails
+  patchDir?: string
 }): boolean {
   const patch = readPatch({ patchFilePath, packageDetails, patchDir })
   try {

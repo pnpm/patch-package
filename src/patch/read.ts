@@ -11,12 +11,15 @@ export function readPatch({
   patchDir,
 }: {
   patchFilePath: string
-  packageDetails: PackageDetails
-  patchDir: string
+  packageDetails?: PackageDetails
+  patchDir?: string
 }): PatchFilePart[] {
   try {
     return parsePatchFile(readFileSync(patchFilePath).toString())
   } catch (e) {
+    if (packageDetails == null || patchDir == null) {
+      throw e
+    }
     const fixupSteps: string[] = []
     const relativePatchFilePath = normalize(
       relative(process.cwd(), patchFilePath),
