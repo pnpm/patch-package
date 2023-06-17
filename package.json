@@ -1,6 +1,6 @@
 {
-  "name": "patch-package",
-  "version": "7.0.0",
+  "name": "@pnpm/patch-package",
+  "version": "0.0.0",
   "description": "Fix broken node modules with no fuss",
   "main": "dist/index.js",
   "repository": "github:ds300/patch-package",
@@ -12,7 +12,7 @@
   },
   "bin": "./index.js",
   "scripts": {
-    "prepublishOnly": "yarn run clean && yarn run build",
+    "prepublishOnly": "yarn run build",
     "build": "tsc --project tsconfig.build.json",
     "new-integration-test": "ts-node integration-tests/newIntegrationTest.ts",
     "clean": "rimraf dist patch-package.test*.tgz",
