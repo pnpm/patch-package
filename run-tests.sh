@@ -3,10 +3,10 @@ set -e
 
 export CI=true
 
-yarn clean
-yarn build
+pnpm clean
+pnpm build
 version=$(node -e 'console.log(require("./package.json").version)')
-yarn version --new-version 0.0.0 --no-git-tag-version --no-commit-hooks
-yarn pack --filename patch-package.test.$(date +%s).tgz
-yarn version --new-version $version --no-git-tag-version --no-commit-hooks
-yarn jest "$@"
+pnpm version --new-version 0.0.0 --no-git-tag-version --no-commit-hooks
+pnpm pack --filename patch-package.test.$(date +%s).tgz
+pnpm version --new-version $version --no-git-tag-version --no-commit-hooks
+pnpm jest "$@"
