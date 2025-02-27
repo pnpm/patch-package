@@ -93,12 +93,14 @@ export function getPackageResolution({
 
     return resolution
   } else {
-    const lockfile = require(join(
-      appPath,
-      packageManager === "npm-shrinkwrap"
-        ? "npm-shrinkwrap.json"
-        : "package-lock.json",
-    ))
+    const lockfile = require(
+      join(
+        appPath,
+        packageManager === "npm-shrinkwrap"
+          ? "npm-shrinkwrap.json"
+          : "package-lock.json",
+      ),
+    )
     const lockFileStack = [lockfile]
     for (const name of packageDetails.packageNames.slice(0, -1)) {
       const child = lockFileStack[0].dependencies

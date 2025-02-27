@@ -110,15 +110,15 @@ export function makePatch({
       join(resolve(packageDetails.path), "package.json"),
     )
 
-      // copy .npmrc/.yarnrc in case packages are hosted in private registry
-      // copy .yarn directory as well to ensure installations work in yarn 2
-      // tslint:disable-next-line:align
-      ;[".npmrc", ".yarnrc", ".yarn"].forEach((rcFile) => {
-        const rcPath = join(appPath, rcFile)
-        if (existsSync(rcPath)) {
-          copySync(rcPath, join(tmpRepo.name, rcFile), { dereference: true })
-        }
-      })
+    // copy .npmrc/.yarnrc in case packages are hosted in private registry
+    // copy .yarn directory as well to ensure installations work in yarn 2
+    // tslint:disable-next-line:align
+    ;[".npmrc", ".yarnrc", ".yarn"].forEach((rcFile) => {
+      const rcPath = join(appPath, rcFile)
+      if (existsSync(rcPath)) {
+        copySync(rcPath, join(tmpRepo.name, rcFile), { dereference: true })
+      }
+    })
 
     if (packageManager === "yarn") {
       console.info(
@@ -216,7 +216,7 @@ export function makePatch({
       "--ignore-space-at-eol",
       "--no-ext-diff",
       "--src-prefix=a/",
-      "--dst-prefix=b/"
+      "--dst-prefix=b/",
     )
 
     if (diffResult.stdout.length === 0) {
@@ -241,8 +241,8 @@ export function makePatch({
   symlinks.
   
   ️Please use ${chalk.bold("--include")} and/or ${chalk.bold(
-          "--exclude",
-        )} to narrow the scope of your patch if
+    "--exclude",
+  )} to narrow the scope of your patch if
   this was unintentional.
 `)
       } else {
@@ -251,7 +251,10 @@ export function makePatch({
           outPath,
           gzipSync(
             JSON.stringify({
-              error: { message: (e as Error).message, stack: (e as Error).stack },
+              error: {
+                message: (e as Error).message,
+                stack: (e as Error).stack,
+              },
               patch: diffResult.stdout.toString(),
             }),
           ),

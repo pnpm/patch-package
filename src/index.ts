@@ -152,8 +152,8 @@ Usage:
   =======================
 
     ${chalk.bold("patch-package")} <package-name>${chalk.italic(
-    "[ <package-name>]",
-  )}
+      "[ <package-name>]",
+    )}
 
   When given package names as arguments, patch-package will create patch files
   based on any changes you've made to the versions installed by yarn/npm.

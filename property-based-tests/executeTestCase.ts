@@ -24,35 +24,35 @@ jest.mock("fs-extra", () => {
     setWorkingFiles,
     getWorkingFiles,
     ensureDirSync: jest.fn(),
-    readFileSync: jest.fn(path => getWorkingFiles()[path].contents),
+    readFileSync: jest.fn((p) => getWorkingFiles()[p].contents),
     writeFileSync: jest.fn(
-      (path: string, contents: string, opts?: { mode?: number }) => {
-        getWorkingFiles()[path] = {
+      (p: string, contents: string, opts?: { mode?: number }) => {
+        getWorkingFiles()[p] = {
           contents,
           mode: opts && typeof opts.mode === "number" ? opts.mode : 0o644,
         }
       },
     ),
-    unlinkSync: jest.fn(path => delete getWorkingFiles()[path]),
+    unlinkSync: jest.fn((p) => delete getWorkingFiles()[p]),
     moveSync: jest.fn((from, to) => {
       getWorkingFiles()[to] = getWorkingFiles()[from]
       delete getWorkingFiles()[from]
     }),
-    statSync: jest.fn(path => getWorkingFiles()[path]),
-    chmodSync: jest.fn((path, mode) => {
-      const { contents } = getWorkingFiles()[path]
-      getWorkingFiles()[path] = { contents, mode }
+    statSync: jest.fn((p) => getWorkingFiles()[p]),
+    chmodSync: jest.fn((p, mode) => {
+      const { contents } = getWorkingFiles()[p]
+      getWorkingFiles()[p] = { contents, mode }
     }),
   }
 })
 
 function writeFiles(cwd: string, files: Files): void {
   const mkdirpSync = require("fs-extra/lib/mkdirs/index.js").mkdirpSync
-  const writeFileSync = require("fs").writeFileSync
-  Object.keys(files).forEach(filePath => {
+  const writeFileSyncLocal = require("fs").writeFileSync
+  Object.keys(files).forEach((filePath) => {
     if (!filePath.startsWith(".git/")) {
       mkdirpSync(path.join(cwd, path.dirname(filePath)))
-      writeFileSync(path.join(cwd, filePath), files[filePath].contents, {
+      writeFileSyncLocal(path.join(cwd, filePath), files[filePath].contents, {
         mode: files[filePath].mode,
       })
     }
@@ -62,7 +62,7 @@ function writeFiles(cwd: string, files: Files): void {
 function removeLeadingSpaceOnBlankLines(patchFileContents: string): string {
   return patchFileContents
     .split("\n")
-    .map(line => (line === " " ? "" : line))
+    .map((line) => (line === " " ? "" : line))
     .join("\n")
 }
 
@@ -114,9 +114,8 @@ export function executeTestCase(testCase: TestCase) {
 
   const patchFileContents = patchResult.stdout.toString()
 
-  const patchFileContentsWithBlankLines = removeLeadingSpaceOnBlankLines(
-    patchFileContents,
-  )
+  const patchFileContentsWithBlankLines =
+    removeLeadingSpaceOnBlankLines(patchFileContents)
 
   it("looks the same whether parsed with blank lines or not", () => {
     reportingFailures(() => {

@@ -21,9 +21,8 @@ describe(packageIsDevDependency, () => {
     expect(
       packageIsDevDependency({
         appPath,
-        packageDetails: getPackageDetailsFromPatchFilename(
-          "chalk+3.0.1.patch",
-        )!,
+        packageDetails:
+          getPackageDetailsFromPatchFilename("chalk+3.0.1.patch")!,
       }),
     ).toBe(false)
   })

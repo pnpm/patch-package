@@ -114,14 +114,8 @@ export function applyPatchesForApp({
         continue
       }
 
-      const {
-        name,
-        version,
-        path,
-        pathSpecifier,
-        isDevOnly,
-        patchFilename,
-      } = packageDetails
+      const { name, version, path, pathSpecifier, isDevOnly, patchFilename } =
+        packageDetails
 
       const installedPackageVersion = getInstalledPackageVersion({
         appPath,

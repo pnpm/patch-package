@@ -15,9 +15,7 @@ export interface PatchedPackageDetails extends PackageDetails {
   isDevOnly: boolean
 }
 
-function parseNameAndVersion(
-  s: string,
-): {
+function parseNameAndVersion(s: string): {
   name: string
   version?: string
 } | null {
