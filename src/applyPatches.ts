@@ -195,7 +195,7 @@ export function applyPatchesForApp({
       if (error instanceof PatchApplicationError) {
         errors.push(error.message)
       } else {
-        errors.push(createUnexpectedError({ filename, error }))
+        errors.push(createUnexpectedError({ filename, error: error as Error }))
       }
     }
   }

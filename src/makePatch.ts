@@ -251,7 +251,7 @@ export function makePatch({
           outPath,
           gzipSync(
             JSON.stringify({
-              error: { message: e.message, stack: e.stack },
+              error: { message: (e as Error).message, stack: (e as Error).stack },
               patch: diffResult.stdout.toString(),
             }),
           ),
