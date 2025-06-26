@@ -144,6 +144,20 @@ export function applyPatchesForApp({
           reverse,
           packageDetails,
           patchDir,
+          onPatchError: (error, { phase }) => {
+            const errorDetails = `${error.message}\n${error.stack || ''}\nPhase: ${phase}`;
+            if (phase === 'apply') {
+              errors.push(
+                createDetailedPatchError({
+                  packageName: name,
+                  patchFileName: filename,
+                  pathSpecifier,
+                  path,
+                  errorDetails,
+                }),
+              );
+            }
+          },
         })
       ) {
         // yay patch was applied successfully
@@ -233,19 +247,23 @@ export function applyPatch({
   reverse,
   packageDetails,
   patchDir,
+  onPatchError,
 }: {
   patchFilePath: string
   reverse: boolean
   packageDetails?: PackageDetails
   patchDir?: string
+  onPatchError?: (error: Error, context: { phase: 'apply' | 'reverse-dry-run' }) => void
 }): boolean {
   const patch = readPatch({ patchFilePath, packageDetails, patchDir })
   try {
     executeEffects(reverse ? reversePatch(patch) : patch, { dryRun: false })
   } catch (e) {
+    onPatchError?.(e as Error, { phase: 'apply' });
     try {
       executeEffects(reverse ? patch : reversePatch(patch), { dryRun: true })
     } catch (e) {
+      onPatchError?.(e as Error, { phase: 'reverse-dry-run' });
       return false
     }
   }
@@ -391,4 +409,45 @@ ${chalk.red.bold("**ERROR**")} ${chalk.red(
 ${error.stack}
 
   `
+}
+
+function createDetailedPatchError({
+  packageName,
+  patchFileName,
+  path,
+  pathSpecifier,
+  errorDetails,
+}: {
+  packageName: string
+  patchFileName: string
+  path: string
+  pathSpecifier: string
+  errorDetails: string
+}) {
+  return `
+${chalk.red.bold("**ERROR**")} ${chalk.red(
+    `Failed to apply patch for package ${chalk.bold(packageName)} at path`,
+  )}
+  
+    ${path}
+
+  This error was caused because patch-package cannot apply the following patch file:
+
+    patches/${patchFileName}
+
+  Error details:
+  ${chalk.yellow(errorDetails)}
+
+  Try removing node_modules and trying again. If that doesn't work, maybe there was
+  an accidental change made to the patch file? Try recreating it by manually
+  editing the appropriate files and running:
+  
+    patch-package ${pathSpecifier}
+  
+  If that doesn't work, then it's a bug in patch-package, so please submit a bug
+  report. Thanks!
+
+    https://github.com/ds300/patch-package/issues
+    
+`
 }
