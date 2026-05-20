@@ -164,6 +164,17 @@ function applyPatch(
     }
   }
 
+  // Break any hardlinks from `path` back to the package manager's
+  // content-addressable store. pnpm and yarn berry hardlink (or
+  // reflink) package files from the store into node_modules, so a
+  // truncating fs.writeFileSync below would mutate the shared inode —
+  // corrupting the on-disk store copy and leaking patched content
+  // into every other snapshot that linked the same file. unlinkSync
+  // removes only this dirent; the store inode (and any other
+  // hardlinks pointing at it) stays untouched, and the writeFileSync
+  // creates a fresh inode at `path` whose mode is taken from the
+  // `{ mode }` option above.
+  fs.unlinkSync(path)
   fs.writeFileSync(path, fileLines.join("\n"), { mode })
 }
 
