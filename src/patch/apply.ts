@@ -209,6 +209,7 @@ function evaluateHunk(
     return null
   }
 
+  let reachedUnterminatedEnd = false
   for (const part of hunk.parts) {
     switch (part.type) {
       case "deletion":
@@ -220,6 +221,10 @@ function evaluateHunk(
           }
           contextIndex++
         }
+        reachedUnterminatedEnd =
+          !part.noNewlineAtEndOfFile &&
+          contextIndex === fileLines.length &&
+          fileLines[fileLines.length - 1] !== ""
 
         if (part.type === "deletion") {
           result.push({
@@ -238,6 +243,14 @@ function evaluateHunk(
         }
         break
       case "insertion":
+        // `git diff --ignore-cr-at-eol` writes lines appended to a file
+        // without a final newline as context followed by the insertion.
+        // The newline is restored so that the insertion's "pop" removes it
+        // rather than the last inserted line.
+        if (reachedUnterminatedEnd && part.noNewlineAtEndOfFile) {
+          result.push({ type: "push", line: "" })
+        }
+        reachedUnterminatedEnd = false
         result.push({
           type: "splice",
           index: contextIndex,
