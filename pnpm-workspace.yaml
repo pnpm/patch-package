@@ -1,0 +1,4 @@
+allowBuilds:
+  husky: true
+lockfile:
+  format: v13
