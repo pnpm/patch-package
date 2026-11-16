@@ -2,3 +2,7 @@ allowBuilds:
   husky: true
 lockfile:
   format: v13
+registries:
+  https://registry.npmjs.com/:
+    scopes:
+      - '@pnpm'
